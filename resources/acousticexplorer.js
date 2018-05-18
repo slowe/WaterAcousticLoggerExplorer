@@ -140,37 +140,45 @@ AcousticLogger.prototype.load = function(){
 AcousticLogger.prototype.init = function(){
 
 	var el = S('#controls');
-
-	this.slider = { 'values': this.daterange };
-	
-	this.slider.slider = noUiSlider.create(el.find('#slider')[0], {
-		'start': this.slider.values[1],
-		'step': 86400000,
-		'range': {'min':this.daterange[0].getTime(),'max':this.daterange[1].getTime()}
-	});
-
-	if(el.find('.min').length > 0) el.find('.min').html(this.daterange[0].toISOString().substr(0,10));
-	if(el.find('.max').length > 0) el.find('.max').html(this.daterange[1].toISOString().substr(0,10));
-
-	this.drawAll((new Date(this.slider.values[1])).toISOString().substr(0,10));
-
 	var _obj = this;
 
+	this.slider = { 'values': this.daterange[1] };
+	sperday = 86400000;
+	
+	this.slider.slider = noUiSlider.create(el.find('#slider')[0], {
+		'start': this.slider.values/sperday,
+		'step': 1,
+		'range': {'min':this.daterange[0].getTime()/sperday,'max':this.daterange[1].getTime()/sperday}
+	});
+
+	S('#dateedit').attr('min',this.daterange[0].toISOString().substr(0,10));
+	S('#dateedit').attr('max',this.daterange[1].toISOString().substr(0,10));
+	S('#dateedit').attr('value',this.daterange[1].toISOString().substr(0,10));
+	S('#dateedit').on('change',function(e){
+		d = new Date(e.currentTarget.value);
+		t = d.getTime();
+		_obj.slider.slider.set(t/sperday);
+	});
+
+	this.drawAll((new Date(this.slider.values)).toISOString().substr(0,10));
+
 	this.slider.slider.on('update', function(values, handle) {
+		
 		var value = values[handle];
 		var change = false;
 		if(_obj.slider.values[handle] != parseFloat(value)) change = true;
-		_obj.slider.values[handle] = parseFloat(value);
+		_obj.slider.values[handle] = parseFloat(value)*sperday;
 		var val = _obj.slider.values[0];
 		val = (new Date(_obj.slider.values[0])).toISOString().substr(0,10);
 		if(el.find('.selected').length > 0) el.find('.selected').html(val);
+		S('#dateedit').attr('value',val);
 		d = new Date(_obj.slider.values[0]);
 		_obj.drawAll(d.toISOString().substr(0,10))
 
 	});
-	this.slider.slider.on('set',function(){
-///		d = new Date(_obj.slider.values[0]);
-	//	_obj.drawAll(d.toISOString().substr(0,10))
+	this.slider.slider.on('set',function(e){
+		d = new Date(_obj.slider.values[0]);
+		_obj.drawAll(d.toISOString().substr(0,10))
 	});
 	return this;
 }

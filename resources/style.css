@@ -319,9 +319,10 @@ p {
     margin: 0;
 }
 
-#controls .min, #controls .max { display: none; }
 #controls .selected { text-align: center; display: block; }
+#controls .min, #controls .max, #controls .selected { display: none; }
 #controls { margin-bottom: 1em; }
+#controls #dateedit { font-size: 1em; margin-top: 0.25em;}
 .siteId {
     display: inline-block;
     width: 10%;
