@@ -235,7 +235,7 @@ AcousticLogger.prototype.drawAll = function(date){
 			}
 			// Only update the left value if 
 			if(l > 0) css.left = (l*100).toFixed(2)+'%';
-			this.data.el[id].css(css);//.attr('title',title);
+			this.data.el[id].css(css);
 			if(balloon && balloon == id) S('.balloon').html(title);
 		}
 	}
@@ -245,7 +245,7 @@ AcousticLogger.prototype.drawAll = function(date){
 		this.data.el = {};
 		for(id in this.data.acoustic){
 			this.data.el[id] = S('#sensor-'+id+' .spread');
-			this.data.el[id].on('mouseover',{id:id},function(e){
+			this.data.el[id].parent().on('mouseover',{id:id},function(e){
 				S('.balloon').remove();
 				S(e.currentTarget).find('.level').html('<div class="balloon" data="'+e.data.id+'">'+getTitle(e.data.id)+'</div>')
 			})
