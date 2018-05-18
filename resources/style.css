@@ -331,7 +331,7 @@ p {
 .spreadHolder {
     display: inline-block;
     width: 100%;
-    height: 4px;
+    height: 6px;
 }
 .spreadHolder:hover {
 	background-color: rgba(255,255,255,0.4);
