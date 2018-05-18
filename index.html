@@ -1,44 +1,51 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-	<title>Yorkshire Water Acoustic Logger Explorer</title>
-	<script type="text/javascript" src="resources/stuquery.js"></script>
-	<script type="text/javascript" src="resources/acousticexplorer.js"></script>
-	<script type="text/javascript" src="resources/nouislider.min.js"></script>
-	<link rel="stylesheet" href="resources/nouislider.min.css">
-	<link rel="stylesheet" href="resources/style.css">
-	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta property="og:url"           content="https://slowe.github.io/WaterAcousticLoggerExplorer/" />
-    <meta property="og:type"          content="website" />
-    <meta property="og:title"         content="Yorkshire Water Acoustic Logger Explorer" />
-    <meta property="og:description"   content="Explore " />
-    <meta property="og:image"         content="" />
+
+<head>
+    <title>Yorkshire Water Acoustic Logger Explorer</title>
+    <script type="text/javascript" src="resources/stuquery.js"></script>
+    <script type="text/javascript" src="resources/acousticexplorer.js"></script>
+    <script type="text/javascript" src="resources/nouislider.min.js"></script>
+    <link rel="stylesheet" href="resources/nouislider.min.css">
+    <link rel="stylesheet" href="resources/style.css">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta property="og:url" content="https://slowe.github.io/WaterAcousticLoggerExplorer/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Yorkshire Water Acoustic Logger Explorer" />
+    <meta property="og:description" content="Explore " />
+    <meta property="og:image" content="" />
     <link rel="icon" type="image/vnd.microsoft.icon" href="" />
 </head>
+
 <body>
 
-	<!--
+    <!--
 	<input type="checkbox" id="hamburger" class="hamburger">
 	<label for="hamburger" class="hamburger"><span class="nv">Toggle menu (if not visible)</span></label>
 	-->
-	<div id="heading"><h1>Yorkshire Water Acoustic Logger Explorer 0.1</h1></div>
-	<menu>
-		<div class="holder">Header</div>
-	</menu>
-	<div id="main">
+    <div id="heading">
+        <h1>Yorkshire Water Acoustic Logger Explorer 0.1</h1></div>
+    <menu>
+        <div class="holder">Header</div>
+    </menu>
+    <div id="main">
 
 
 
 
-	</div>
+    </div>
 
-	<script type="text/javascript">
-	var explorer;
-	S(document).ready(function(){
-		explorer = new AcousticLogger({
-
-		});
-	});
-	</script>
+    <script type="text/javascript">
+        var explorer;
+        S(document).ready(function () {
+            explorer = new AcousticLogger({
+                "files": {
+                    "acousticData": "https://datamillnorth.org/download/yorkshire-water-daily-acoustic-logger-data/afc4892a-90a8-4365-96bd-878d37bfd5b9/Acoustic%20Logger%20Data.csv",
+                    "siteVisitData": "https://datamillnorth.org/download/yorkshire-water-daily-acoustic-logger-data/256fdf82-a801-4f47-b835-2ce929103fe1/Leak%20Alarm%20Results.csv"
+                };
+            });
+        });
+    </script>
 
 </body>
+
 </html>
