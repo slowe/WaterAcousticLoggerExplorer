@@ -40,6 +40,20 @@ AcousticLogger.prototype.load = function(){
 			this.data.acoustic = {};
 			this.daterange = [1e20,-1e20];
 			this.range = [1e20,-1e20];
+			var months = {
+				"Jan": "01",
+				"Feb": "02",
+				"Mar": "03",
+				"Apr": "04",
+				"May": "05",
+				"Jun": "06",
+				"Jul": "07",
+				"Aug": "08",
+				"Sep": "09",
+				"Oct": "10",
+				"Nov": "11",
+				"Dec": "12"
+			}
 
 			// Example of the file format
 			// ID,LvlSpr,02-May,01-May,30-Apr,29-Apr,28-Apr,27-Apr,26-Apr,25-Apr,24-Apr,23-Apr,22-Apr,21-Apr,20-Apr,19-Apr,18-Apr,17-Apr,16-Apr,15-Apr,14-Apr,13-Apr,12-Apr,11-Apr,10-Apr,09-Apr,08-Apr,07-Apr,06-Apr,05-Apr,04-Apr,03-Apr,02-Apr,01-Apr,31-Mar,30-Mar,29-Mar,28-Mar,27-Mar,26-Mar,25-Mar,24-Mar,23-Mar,22-Mar,21-Mar,20-Mar,19-Mar,18-Mar,17-Mar,16-Mar,15-Mar,14-Mar,13-Mar,12-Mar,11-Mar,10-Mar,09-Mar,08-Mar,07-Mar,06-Mar,05-Mar,04-Mar,03-Mar,02-Mar,01-Mar,28-Feb,27-Feb,26-Feb,25-Feb,24-Feb,23-Feb,22-Feb,21-Feb,20-Feb,19-Feb,18-Feb,17-Feb,16-Feb,15-Feb,14-Feb,13-Feb,12-Feb,11-Feb,10-Feb,09-Feb,08-Feb,07-Feb
@@ -124,7 +138,6 @@ AcousticLogger.prototype.init = function(){
 	var el = S('#controls');
 
 	this.slider = { 'values': this.daterange };
-	console.log(this.slider.el,this.daterange,el)
 	
 	this.slider.slider = noUiSlider.create(el.find('#slider')[0], {
 		'start': this.slider.values[1],
@@ -205,7 +218,13 @@ AcousticLogger.prototype.drawAll = function(date){
 			html += '</div>';
 			html += '</div>';
 		}else{
-			this.data.el[id].css({'width':(w*100)+'%','left':(l*100)+'%','filter':(alarm ? '':'grayscale(1)')}).attr('title',title);
+			css = {
+				'width':(w*100)+'%',
+				'filter':(alarm ? '':'grayscale(1)')
+			}
+			// Only update the left value if 
+			if(l > 0) css.left = (l*100)+'%';
+			this.data.el[id].css(css).attr('title',title);
 		}
 	}
 

@@ -319,6 +319,9 @@ p {
     margin: 0;
 }
 
+#controls .min, #controls .max { display: none; }
+#controls .selected { text-align: center; display: block; }
+#controls { margin-bottom: 1em; }
 .siteId {
     display: inline-block;
     width: 10%;
@@ -339,8 +342,7 @@ p {
     position: relative;
     left: 15%;
     border-radius: 0.25em;
-    transition: width 0.25s ease-in;
-    transition: left 0.25s ease-in;
+    transition: width 0.25s ease-in, left 0.25s ease-in;
 }
 
 .level {
