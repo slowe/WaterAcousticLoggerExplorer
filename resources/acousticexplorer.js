@@ -177,7 +177,7 @@ console.log('range',this.range,range)
 
 		l = 0;
 		r = 1;
-		w = 1;
+		w = 0;
 		if(this.data.acoustic[id].spread[date]){
 			mn = (this.data.acoustic[id].level[date] - this.data.acoustic[id].spread[date]/2);
 			mx = (this.data.acoustic[id].level[date] + this.data.acoustic[id].spread[date]/2);
@@ -187,19 +187,17 @@ console.log('range',this.range,range)
 			if(r > 1) r = 1.1;
 			w = r-l;
 		}
-		if(typeof w!=="number") w = 1;
+		if(typeof w!=="number") w = 0;
 	
 
 		html += '<div class="elementHolder">';
-		html += '<div class="siteId">'+id+'</div><div class="spreadHolder">';
+		//html += '<div class="siteId">'+id+'</div>';
+		html += '<div class="spreadHolder">';
 
 //		console.log(id,w,l,r)
 		// If we have the level
-		html += '<div class="spread '+(mx > 200 ? 'c12-bg':'c1-bg')+'" style="left: '+(l*100)+'%;width:'+(w*100)+'%;overflow:hidden;white-space:nowrap;position:relative;">';
-		// If we have the spread
-		if(this.data.acoustic[id].level[date]){
-			html += '<div class="level">'+this.data.acoustic[id].level[date]+' ('+this.data.acoustic[id].spread[date]+')</div>';
-		}
+		html += '<div class="spread '+(mx > 200 ? 'c12-bg':'c1-bg')+'" style="left: '+(l*100)+'%;width:'+(w*100)+'%;overflow:hidden;white-space:nowrap;position:relative;" title="'+id+': '+this.data.acoustic[id].level[date]+' (spread = '+this.data.acoustic[id].spread[date]+')">';
+		html += '<div class="level"></div>';
 		html += '</div>';
 		html += '</div>';
 		html += '</div>';
