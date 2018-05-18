@@ -35,10 +35,10 @@ AcousticLogger.prototype.load = function(){
 		'success': function(data,attrs){
 			this.log('complete',attrs,this);
 			
-			this.log(data);
 			var lines = data.split(/[\n\r]+/);
 			this.data.acoustic = {};
 			this.daterange = [1e20,-1e20];
+			this.range = [1e20,-1e20];
 
 			// Example of the file format
 			// ID,LvlSpr,02-May,01-May,30-Apr,29-Apr,28-Apr,27-Apr,26-Apr,25-Apr,24-Apr,23-Apr,22-Apr,21-Apr,20-Apr,19-Apr,18-Apr,17-Apr,16-Apr,15-Apr,14-Apr,13-Apr,12-Apr,11-Apr,10-Apr,09-Apr,08-Apr,07-Apr,06-Apr,05-Apr,04-Apr,03-Apr,02-Apr,01-Apr,31-Mar,30-Mar,29-Mar,28-Mar,27-Mar,26-Mar,25-Mar,24-Mar,23-Mar,22-Mar,21-Mar,20-Mar,19-Mar,18-Mar,17-Mar,16-Mar,15-Mar,14-Mar,13-Mar,12-Mar,11-Mar,10-Mar,09-Mar,08-Mar,07-Mar,06-Mar,05-Mar,04-Mar,03-Mar,02-Mar,01-Mar,28-Feb,27-Feb,26-Feb,25-Feb,24-Feb,23-Feb,22-Feb,21-Feb,20-Feb,19-Feb,18-Feb,17-Feb,16-Feb,15-Feb,14-Feb,13-Feb,12-Feb,11-Feb,10-Feb,09-Feb,08-Feb,07-Feb
@@ -73,12 +73,16 @@ AcousticLogger.prototype.load = function(){
 						val = parseInt(cols[c]);
 						if(!isNaN(val)) this.data.acoustic[id][typ][head[c]] = val;
 						if(this.data.acoustic[id].level[head[c]] && this.data.acoustic[id].spread[head[c]]){
+							mn = this.data.acoustic[id].level[head[c]] - Math.abs(this.data.acoustic[id].spread[head[c]])/2;
+							mx = this.data.acoustic[id].level[head[c]] + Math.abs(this.data.acoustic[id].spread[head[c]])/2;
+							if(mx > 200) console.log(id,this.data.acoustic[id].level[head[c]],this.data.acoustic[id].spread[head[c]])
+							if(mn < this.range[0]) this.range[0] = mn;
+							if(mx > this.range[1] && mx < 100) this.range[1] = mx;
 							this.data.acoustic[id].diff[head[c]] = this.data.acoustic[id].level[head[c]] - this.data.acoustic[id].spread[head[c]];
 						}
 					}
 				}
 			}
-			console.log(this.data.acoustic)
 
 			this.init();
 
@@ -165,17 +169,40 @@ AcousticLogger.prototype.drawAll = function(date){
 	}
 
 	html = "";
+	
+	var range = this.range[1]-this.range[0];
+console.log('range',this.range,range)
+
 	for(id in this.data.acoustic){
 
-		html += '<div>'+id+'</div>';
-		// If we have the level
-		if(this.data.acoustic[id].level[date]){
-			html += '<div>'+this.data.acoustic[id].level[date]+'</div>';
-		}
-		// If we have the spread
+		l = 0;
+		r = 1;
+		w = 1;
 		if(this.data.acoustic[id].spread[date]){
-			html += '<div>'+this.data.acoustic[id].spread[date]+'</div>';
+			mn = (this.data.acoustic[id].level[date] - this.data.acoustic[id].spread[date]/2);
+			mx = (this.data.acoustic[id].level[date] + this.data.acoustic[id].spread[date]/2);
+			l = (mn - this.range[0])/range;
+			r = (mx - this.range[0])/range;
+			if(l > 1) l = 1;
+			if(r > 1) r = 1.1;
+			w = r-l;
 		}
+		if(typeof w!=="number") w = 1;
+	
+
+		html += '<div class="elementHolder">';
+		html += '<div class="siteId">'+id+'</div><div class="spreadHolder">';
+
+//		console.log(id,w,l,r)
+		// If we have the level
+		html += '<div class="spread '+(mx > 200 ? 'c12-bg':'c1-bg')+'" style="left: '+(l*100)+'%;width:'+(w*100)+'%;overflow:hidden;white-space:nowrap;position:relative;">';
+		// If we have the spread
+		if(this.data.acoustic[id].level[date]){
+			html += '<div class="level">'+this.data.acoustic[id].level[date]+' ('+this.data.acoustic[id].spread[date]+')</div>';
+		}
+		html += '</div>';
+		html += '</div>';
+		html += '</div>';
 	}
 
 	S('#output').html(html);
