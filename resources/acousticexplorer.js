@@ -9,6 +9,7 @@ function AcousticLogger(attr) {
 	this.files = attr.files;
 	this.callback = {};
 	this.logging = true;
+	this.drawn = false;
 	
 
 	return this;
@@ -146,12 +147,13 @@ AcousticLogger.prototype.init = function(){
 		var val = _obj.slider.values[0];
 		val = (new Date(_obj.slider.values[0])).toISOString().substr(0,10);
 		if(el.find('.selected').length > 0) el.find('.selected').html(val);
+		d = new Date(_obj.slider.values[0]);
+		_obj.drawAll(d.toISOString().substr(0,10))
 
 	});
 	this.slider.slider.on('set',function(){
-		d = new Date(_obj.slider.values[0]);
-		console.log('set',d);
-		_obj.drawAll(d.toISOString().substr(0,10))
+///		d = new Date(_obj.slider.values[0]);
+	//	_obj.drawAll(d.toISOString().substr(0,10))
 	});
 	return this;
 }
@@ -169,9 +171,9 @@ AcousticLogger.prototype.drawAll = function(date){
 	}
 
 	html = "";
-	
+
+	if(!this.drawn) html = "";	
 	var range = this.range[1]-this.range[0];
-console.log('range',this.range,range)
 
 	for(id in this.data.acoustic){
 
@@ -189,21 +191,32 @@ console.log('range',this.range,range)
 		}
 		if(typeof w!=="number") w = 0;
 	
+		if(!this.drawn){
+			html += '<div class="elementHolder" id="sensor-'+id+'">';
+			//html += '<div class="siteId">'+id+'</div>';
+			html += '<div class="spreadHolder">';
 
-		html += '<div class="elementHolder">';
-		//html += '<div class="siteId">'+id+'</div>';
-		html += '<div class="spreadHolder">';
-
-//		console.log(id,w,l,r)
-		// If we have the level
-		html += '<div class="spread '+(mx > 200 ? 'c12-bg':'c1-bg')+'" style="left: '+(l*100)+'%;width:'+(w*100)+'%;overflow:hidden;white-space:nowrap;position:relative;" title="'+id+': '+this.data.acoustic[id].level[date]+' (spread = '+this.data.acoustic[id].spread[date]+')">';
-		html += '<div class="level"></div>';
-		html += '</div>';
-		html += '</div>';
-		html += '</div>';
+			// If we have the level
+			html += '<div class="spread '+(mx > 200 ? 'c12-bg':'c1-bg')+'" style="left: '+(l*100)+'%;width:'+(w*100)+'%;overflow:hidden;white-space:nowrap;position:relative;" title="'+id+': '+this.data.acoustic[id].level[date]+' (spread = '+this.data.acoustic[id].spread[date]+')">';
+			html += '<div class="level"></div>';
+			html += '</div>';
+			html += '</div>';
+			html += '</div>';
+		}else{
+			//console.log(id)
+			this.data.el[id].css({'width':(w*100)+'%','left':(l*100)+'%'});
+		}
 	}
 
-	S('#output').html(html);
+	if(!this.drawn){
+		S('#output').html(html);
+		this.data.el = {};
+		for(id in this.data.acoustic){
+			this.data.el[id] = S('#sensor-'+id+' .spread');
+		}
+	}
+
+	this.drawn = true;
 	
 	
 	return this;
