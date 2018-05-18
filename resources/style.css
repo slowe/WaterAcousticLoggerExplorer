@@ -383,3 +383,7 @@ p {
 	border-left-color: black;
 	bottom: -0.5em;
 }
+
+@media only screen and (max-width: 800px) {
+	body { padding: 1em; }
+}
