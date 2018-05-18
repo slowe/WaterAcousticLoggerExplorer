@@ -253,7 +253,7 @@ AcousticLogger.prototype.drawAll = function(date){
 		this.data.el = {};
 		for(id in this.data.acoustic){
 			this.data.el[id] = S('#sensor-'+id+' .spread');
-			this.data.el[id].parent().on('mouseover',{id:id},function(e){
+			this.data.el[id].on('mouseover',{id:id},function(e){
 				S('.balloon').remove();
 				S(e.currentTarget).find('.level').html('<div class="balloon" data="'+e.data.id+'">'+getTitle(e.data.id)+'</div>')
 			}).on('click',{id:id},function(e){
