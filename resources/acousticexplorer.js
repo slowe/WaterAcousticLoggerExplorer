@@ -190,21 +190,22 @@ AcousticLogger.prototype.drawAll = function(date){
 			w = r-l;
 		}
 		if(typeof w!=="number") w = 0;
-	
+		alarm = (this.data.acoustic[id].diff[date] > 15);
+		title = id+': '+this.data.acoustic[id].level[date]+' (spread = '+this.data.acoustic[id].spread[date]+')';	
+
 		if(!this.drawn){
 			html += '<div class="elementHolder" id="sensor-'+id+'">';
 			//html += '<div class="siteId">'+id+'</div>';
 			html += '<div class="spreadHolder">';
 
 			// If we have the level
-			html += '<div class="spread '+(mx > 200 ? 'c12-bg':'c1-bg')+'" style="left: '+(l*100)+'%;width:'+(w*100)+'%;overflow:hidden;white-space:nowrap;position:relative;" title="'+id+': '+this.data.acoustic[id].level[date]+' (spread = '+this.data.acoustic[id].spread[date]+')">';
+			html += '<div class="spread '+(mx > 200 ? 'c12-bg':'c1-bg')+'" style="filter:'+(alarm ? '':'grayscale(1)')+';left: '+(l*100)+'%;width:'+(w*100)+'%;overflow:hidden;white-space:nowrap;position:relative;" title="'+title+'">';
 			html += '<div class="level"></div>';
 			html += '</div>';
 			html += '</div>';
 			html += '</div>';
 		}else{
-			//console.log(id)
-			this.data.el[id].css({'width':(w*100)+'%','left':(l*100)+'%'});
+			this.data.el[id].css({'width':(w*100)+'%','left':(l*100)+'%','filter':(alarm ? '':'grayscale(1)')}).attr('title',title);
 		}
 	}
 

@@ -328,13 +328,13 @@ p {
 .spreadHolder {
     display: inline-block;
     width: 80%;
-    height: 0.5em;
+    height: 0.25em;
 }
 
 .spread {
     display: inline-block;
     width: 70%;
-    height: 0.5em;
+    height: 100%;
     background-color: #F9BC26;
     position: relative;
     left: 15%;
@@ -351,7 +351,6 @@ p {
     left: 50%;
     transform: translateX(-50%) translateY(-25%);
     -webkit-transform: translateX(-50%) translateY(-25%);
-    border-radius: 50%;
     vertical-align: middle;
     transition: left 0.25s ease-in;
 }
