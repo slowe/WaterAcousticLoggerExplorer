@@ -31,7 +31,7 @@
 
 		<div id="controls">
 			<div id="slider"></div>
-			<span class="min"></span> &rarr; <span class="max"></span>
+			<span class="min">Min</span><span class="selected">Selected</span><span class="max">Max</span>
 		</div>
 		<div id="output"></div>
 
@@ -46,6 +46,7 @@
                     "siteVisitData": "data/LeakAlarmResults.csv"
                 }
             });
+            explorer.load();
         });
 
         var months = {

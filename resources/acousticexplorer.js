@@ -38,6 +38,7 @@ AcousticLogger.prototype.load = function(){
 			this.log(data);
 			var lines = data.split(/[\n\r]+/);
 			this.data.acoustic = {};
+			this.daterange = [1e20,-1e20];
 
 			// Example of the file format
 			// ID,LvlSpr,02-May,01-May,30-Apr,29-Apr,28-Apr,27-Apr,26-Apr,25-Apr,24-Apr,23-Apr,22-Apr,21-Apr,20-Apr,19-Apr,18-Apr,17-Apr,16-Apr,15-Apr,14-Apr,13-Apr,12-Apr,11-Apr,10-Apr,09-Apr,08-Apr,07-Apr,06-Apr,05-Apr,04-Apr,03-Apr,02-Apr,01-Apr,31-Mar,30-Mar,29-Mar,28-Mar,27-Mar,26-Mar,25-Mar,24-Mar,23-Mar,22-Mar,21-Mar,20-Mar,19-Mar,18-Mar,17-Mar,16-Mar,15-Mar,14-Mar,13-Mar,12-Mar,11-Mar,10-Mar,09-Mar,08-Mar,07-Mar,06-Mar,05-Mar,04-Mar,03-Mar,02-Mar,01-Mar,28-Feb,27-Feb,26-Feb,25-Feb,24-Feb,23-Feb,22-Feb,21-Feb,20-Feb,19-Feb,18-Feb,17-Feb,16-Feb,15-Feb,14-Feb,13-Feb,12-Feb,11-Feb,10-Feb,09-Feb,08-Feb,07-Feb
@@ -54,7 +55,12 @@ AcousticLogger.prototype.load = function(){
 					// Re-write dates
 					//if(!months) months = {'Jan':'01'};
 					if(typeof months==="object"){
-						for(var c = 0; c < cols.length; c++) cols[c] = cols[c].replace(/([0-9]{2})-([A-Za-z]{3})/,function(m,p1,p2){ return "2018-"+months[p2]+"-"+p1; });
+						for(var c = 0; c < cols.length; c++){
+							cols[c] = cols[c].replace(/([0-9]{2})-([A-Za-z]{3})/,function(m,p1,p2){ return "2018-"+months[p2]+"-"+p1; });
+							d = new Date(cols[c]);
+							if(d < this.daterange[0]) this.daterange[0] = d;
+							if(d > this.daterange[1]) this.daterange[1] = d;
+						}
 					}
 
 				}else{
@@ -62,24 +68,24 @@ AcousticLogger.prototype.load = function(){
 					var typ = cols[1];
 					if(typ == "Lvl") typ = "level";
 					if(typ == "Spr") typ = "spread";
-					if(!this.data.acoustic[id]) this.data.acoustic[id] = {'level':{},'spread':{}};
+					if(!this.data.acoustic[id]) this.data.acoustic[id] = {'level':{},'spread':{},'diff':{}};
 					for(var c = 2; c < cols.length; c++){
 						val = parseInt(cols[c]);
 						if(!isNaN(val)) this.data.acoustic[id][typ][head[c]] = val;
+						if(this.data.acoustic[id].level[head[c]] && this.data.acoustic[id].spread[head[c]]){
+							this.data.acoustic[id].diff[head[c]] = this.data.acoustic[id].level[head[c]] - this.data.acoustic[id].spread[head[c]];
+						}
 					}
 				}
 			}
 			console.log(this.data.acoustic)
 
-			
-			
+			this.init();
+
 			if(typeof this.callback.onload==="function") this.callback.onload.call(this);
 		},
 		'progress': function(e,attrs){
 			this.log('progress',attrs,this);
-			
-			
-			
 			if(typeof this.callback.onprogress==="function") this.callback.onprogress.call(this);
 		}
 	});
@@ -107,3 +113,74 @@ AcousticLogger.prototype.load = function(){
 
 	return this;
 }
+
+AcousticLogger.prototype.init = function(){
+
+	var el = S('#controls');
+
+	this.slider = { 'values': this.daterange };
+	console.log(this.slider.el,this.daterange,el)
+	
+	this.slider.slider = noUiSlider.create(el.find('#slider')[0], {
+		'start': this.slider.values[1],
+		'step': 86400000,
+		'range': {'min':this.daterange[0].getTime(),'max':this.daterange[1].getTime()}
+	});
+
+	if(el.find('.min').length > 0) el.find('.min').html(this.daterange[0].toISOString().substr(0,10));
+	if(el.find('.max').length > 0) el.find('.max').html(this.daterange[1].toISOString().substr(0,10));
+
+	this.drawAll((new Date(this.slider.values[1])).toISOString().substr(0,10));
+
+	var _obj = this;
+
+	this.slider.slider.on('update', function(values, handle) {
+		var value = values[handle];
+		var change = false;
+		if(_obj.slider.values[handle] != parseFloat(value)) change = true;
+		_obj.slider.values[handle] = parseFloat(value);
+		var val = _obj.slider.values[0];
+		val = (new Date(_obj.slider.values[0])).toISOString().substr(0,10);
+		if(el.find('.selected').length > 0) el.find('.selected').html(val);
+
+	});
+	this.slider.slider.on('set',function(){
+		d = new Date(_obj.slider.values[0]);
+		console.log('set',d);
+		_obj.drawAll(d.toISOString().substr(0,10))
+	});
+	return this;
+}
+
+
+AcousticLogger.prototype.drawAll = function(date){
+	
+	if(!this.data.acoustic){
+		this.log('No data loaded');
+		return this;
+	}
+	if(!date || typeof date!=="string"){
+		this.log('No valid date sent')
+		return this;
+	}
+
+	html = "";
+	for(id in this.data.acoustic){
+
+		html += '<div>'+id+'</div>';
+		// If we have the level
+		if(this.data.acoustic[id].level[date]){
+			html += '<div>'+this.data.acoustic[id].level[date]+'</div>';
+		}
+		// If we have the spread
+		if(this.data.acoustic[id].spread[date]){
+			html += '<div>'+this.data.acoustic[id].spread[date]+'</div>';
+		}
+	}
+
+	S('#output').html(html);
+	
+	
+	return this;
+}
+
