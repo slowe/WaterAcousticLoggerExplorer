@@ -2,89 +2,353 @@
    v2.0 | 20110126
    License: none (public domain)
 */
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box; }
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
 
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
-  display: block; }
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
+}
 
 body {
-  line-height: 1em; }
+    line-height: 1em;
+}
 
-ol, ul {
-  list-style: none; }
+ol,
+ul {
+    list-style: none;
+}
 
-blockquote, q {
-  quotes: none; }
+blockquote,
+q {
+    quotes: none;
+}
 
-blockquote:before, blockquote:after, q:before, q:after {
-  content: '';
-  content: none; }
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
 
 table {
-  border-collapse: collapse;
-  border-spacing: 0; }
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
 
 /* apply a natural box layout model to all elements */
-*, *:before, *:after {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box; }
+
+*,
+*:before,
+*:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
 
 /* End of reset */
 
-
 body {
-	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-	font-size: 16px;
-	padding: 3em;
-	margin: 0px;
-	background-color: #efefef;
-	color: #222;
-	line-height: 1.25em;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    padding: 3em;
+    margin: 0px;
+    background-color: #efefef;
+    color: #222;
+    line-height: 1.25em;
 }
 
-
 #heading h1 {
-	font-size: 1.5em;
-	font-weight: 600;
-	margin-bottom: 1em;
+    font-size: 1.5em;
+    font-weight: 600;
+    margin-bottom: 1em;
 }
 
 p {
-	margin-bottom: 1em;
+    margin-bottom: 1em;
 }
 
-.c1-bg, .elsewhere .facebook:hover, .c1-bg-hover:hover { background-color: #2254F4; color: white; }
-.c2-bg, .c2-bg-hover:hover { background-color: #178CFF; color: black; }
-.c3-bg, .elsewhere .twitter:hover, .c3-bg-hover:hover { background-color: #00B6FF; color: black; }
-.c4-bg, .c4-bg-hover:hover { background-color: #08DEF9; color: black; }
-.c5-bg, .c5-bg-hover:hover { background-color: #1DD3A7; color: black; }
-.c6-bg, .c6-bg-hover:hover, .seasonal-accent { background-color: #0DBC37; color: black; }
-.c7-bg, .c7-bg-hover:hover, .seasonal { background-color: #67E767; color: black; }
-.c8-bg, .c8-bg-hover:hover { background-color: #722EA5; color: white; }
-.c9-bg, .c9-bg-hover:hover { background-color: #E6007C; color: white; }
-.c10-bg, .c10-bg-hover:hover, .flickr:hover { background-color: #EF3AAB; color: black; }
-.c11-bg, .c11-bg-hover:hover, .youtube:hover { background-color: #D73058; color: white; }
-.c12-bg, .c12-bg-hover:hover { background-color: #D60303; color: white; }
-.c13-bg, .c13-bg-hover:hover { background-color: #FF6700; color: black; }
-.c14-bg, .c14-bg-hover:hover { background-color: #F9BC26; color: black; }
-.s1-bg, .s1-bg-hover:hover { background-color: #2f529f; color: white; }
-.s2-bg, .s2-bg-hover:hover { background-color: #00ace8; color: black; }
-.s3-bg, .s3-bg-hover:hover { background-color: #7dc5ea; color: black; }
-.b1-bg { background-color: #000000; color: white; }
-.b2-bg { background-color: #333333; color: white; }
-.bk-bg { background-color: #6D6D6D; color: white; }
-.b3-bg, .github:hover { background-color: #999999; color: black; }
-.b4-bg { background-color: #bbbbbb; color: black; }
-.b5-bg { background-color: #dfdfdf; color: black; }
-.b6-bg { background-color: #ffffff; color: black; }
+.c1-bg,
+.elsewhere .facebook:hover,
+.c1-bg-hover:hover {
+    background-color: #2254F4;
+    color: white;
+}
+
+.c2-bg,
+.c2-bg-hover:hover {
+    background-color: #178CFF;
+    color: black;
+}
+
+.c3-bg,
+.elsewhere .twitter:hover,
+.c3-bg-hover:hover {
+    background-color: #00B6FF;
+    color: black;
+}
+
+.c4-bg,
+.c4-bg-hover:hover {
+    background-color: #08DEF9;
+    color: black;
+}
+
+.c5-bg,
+.c5-bg-hover:hover {
+    background-color: #1DD3A7;
+    color: black;
+}
+
+.c6-bg,
+.c6-bg-hover:hover,
+.seasonal-accent {
+    background-color: #0DBC37;
+    color: black;
+}
+
+.c7-bg,
+.c7-bg-hover:hover,
+.seasonal {
+    background-color: #67E767;
+    color: black;
+}
+
+.c8-bg,
+.c8-bg-hover:hover {
+    background-color: #722EA5;
+    color: white;
+}
+
+.c9-bg,
+.c9-bg-hover:hover {
+    background-color: #E6007C;
+    color: white;
+}
+
+.c10-bg,
+.c10-bg-hover:hover,
+.flickr:hover {
+    background-color: #EF3AAB;
+    color: black;
+}
+
+.c11-bg,
+.c11-bg-hover:hover,
+.youtube:hover {
+    background-color: #D73058;
+    color: white;
+}
+
+.c12-bg,
+.c12-bg-hover:hover {
+    background-color: #D60303;
+    color: white;
+}
+
+.c13-bg,
+.c13-bg-hover:hover {
+    background-color: #FF6700;
+    color: black;
+}
+
+.c14-bg,
+.c14-bg-hover:hover {
+    background-color: #F9BC26;
+    color: black;
+}
+
+.s1-bg,
+.s1-bg-hover:hover {
+    background-color: #2f529f;
+    color: white;
+}
+
+.s2-bg,
+.s2-bg-hover:hover {
+    background-color: #00ace8;
+    color: black;
+}
+
+.s3-bg,
+.s3-bg-hover:hover {
+    background-color: #7dc5ea;
+    color: black;
+}
+
+.b1-bg {
+    background-color: #000000;
+    color: white;
+}
+
+.b2-bg {
+    background-color: #333333;
+    color: white;
+}
+
+.bk-bg {
+    background-color: #6D6D6D;
+    color: white;
+}
+
+.b3-bg,
+.github:hover {
+    background-color: #999999;
+    color: black;
+}
+
+.b4-bg {
+    background-color: #bbbbbb;
+    color: black;
+}
+
+.b5-bg {
+    background-color: #dfdfdf;
+    color: black;
+}
+
+.b6-bg {
+    background-color: #ffffff;
+    color: black;
+}
+
+.elementHolder {
+    margin: 1em 0;
+}
+
+.siteId {
+    display: inline-block;
+    width: 10%;
+    text-align: center;
+}
+
+.spreadHolder {
+    display: inline-block;
+    width: 80%;
+    height: 0.5em;
+}
+
+.spread {
+    display: inline-block;
+    width: 70%;
+    height: 0.5em;
+    background-color: #F9BC26;
+    position: relative;
+    left: 15%;
+    border-radius: 0.25em;
+}
+
+.level {
+    position: absolute;
+    width: 1em;
+    height: 1em;
+    background-color: #FF6700;
+    left: 50%;
+    transform: translateX(-50%) translateY(-25%);
+    -webkit-transform: translateX(-50%) translateY(-25%);
+    border-radius: 50%;
+    vertical-align: middle;
+}
