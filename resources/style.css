@@ -342,17 +342,44 @@ p {
     position: relative;
     left: 15%;
     border-radius: 0.25em;
-    transition: width 0.25s ease-in, left 0.25s ease-in;
+    /*transition: width 0.25s linear, left 0.25s linear;*/
 }
 
 .level {
-    position: absolute;
+    position: relative;
     width: 1em;
-    height: 1em;
+    max-width: 100%;
+    height: 100%;
     background-color: #FF6700;
     left: 50%;
-    transform: translateX(-50%) translateY(-25%);
-    -webkit-transform: translateX(-50%) translateY(-25%);
+    transform: translate3D(-50%,0,0);
+    -webkit-transform: translate3D(-50%,0,0);
     vertical-align: middle;
-    transition: left 0.25s ease-in;
+}
+
+.balloon {
+	position: absolute;
+	background-color: black;
+	color: white;
+	padding: 0.25em 0.5em;
+	left: 50%;
+	top: 0;
+	transform: translate3d(0%,-120%, 0);
+	white-space: nowrap;
+	margin-right: -50%;
+	text-align: center;
+	z-index: 100;
+	box-shadow: 1px 1px 10px rgba(0,0,0,0.2);
+}
+.balloon::after {
+	content: '';
+	position: absolute;
+	bottom: auto;
+	width: 0;
+	height: 0;
+	border: 0.5em solid transparent;
+	left: 0;
+	border-color: transparent;
+	border-left-color: black;
+	bottom: -0.5em;
 }

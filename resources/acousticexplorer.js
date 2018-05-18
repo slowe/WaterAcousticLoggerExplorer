@@ -83,18 +83,22 @@ AcousticLogger.prototype.load = function(){
 					var typ = cols[1];
 					if(typ == "Lvl") typ = "level";
 					if(typ == "Spr") typ = "spread";
-					if(!this.data.acoustic[id]) this.data.acoustic[id] = {'level':{},'spread':{},'diff':{}};
+					if(!this.data.acoustic[id]) this.data.acoustic[id] = {};
 					for(var c = 2; c < cols.length; c++){
 						val = parseInt(cols[c]);
-						if(!isNaN(val)) this.data.acoustic[id][typ][head[c]] = val;
-						if(this.data.acoustic[id].level[head[c]] && this.data.acoustic[id].spread[head[c]]){
-							mn = this.data.acoustic[id].level[head[c]] - Math.abs(this.data.acoustic[id].spread[head[c]])/2;
-							mx = this.data.acoustic[id].level[head[c]] + Math.abs(this.data.acoustic[id].spread[head[c]])/2;
-							if(mx > 200) console.log(id,this.data.acoustic[id].level[head[c]],this.data.acoustic[id].spread[head[c]])
+						me = this.data.acoustic[id][head[c]];
+
+						if(!me) me = {};
+						if(!isNaN(val)) me[typ] = val;
+						if(me.level && me.spread){
+							mn = me.level - Math.abs(me.spread)/2;
+							mx = me.level + Math.abs(me.spread)/2;
+							if(mx > 200) console.log(id,me.level,me.spread)
 							if(mn < this.range[0]) this.range[0] = mn;
 							if(mx > this.range[1] && mx < 100) this.range[1] = mx;
-							this.data.acoustic[id].diff[head[c]] = this.data.acoustic[id].level[head[c]] - this.data.acoustic[id].spread[head[c]];
+							me.diff = me.level - me.spread;
 						}
+						this.data.acoustic[id][head[c]] = me;
 					}
 				}
 			}
@@ -182,49 +186,57 @@ AcousticLogger.prototype.drawAll = function(date){
 		this.log('No valid date sent')
 		return this;
 	}
+	this.date = date;
 
 	html = "";
 
 	if(!this.drawn) html = "";	
 	var range = this.range[1]-this.range[0];
+	var balloon = S('.balloon').attr('data');
+
+	_obj = this;
+	function getTitle(id){
+		return id+(_obj.data.acoustic[id][_obj.date].level ? ': '+_obj.data.acoustic[id][_obj.date].level+' (spread = '+_obj.data.acoustic[id][_obj.date].spread+')' : '');
+	}
 
 	for(id in this.data.acoustic){
 
 		l = 0;
 		r = 1;
 		w = 0;
-		if(this.data.acoustic[id].spread[date]){
-			mn = (this.data.acoustic[id].level[date] - this.data.acoustic[id].spread[date]/2);
-			mx = (this.data.acoustic[id].level[date] + this.data.acoustic[id].spread[date]/2);
+		alarm = false;
+		title = id;
+		if(this.data.acoustic[id][date] && this.data.acoustic[id][date].spread){
+			mn = (this.data.acoustic[id][date].level - this.data.acoustic[id][date].spread/2);
+			mx = (this.data.acoustic[id][date].level + this.data.acoustic[id][date].spread/2);
 			l = (mn - this.range[0])/range;
 			r = (mx - this.range[0])/range;
 			if(l > 1) l = 1;
 			if(r > 1) r = 1.1;
 			w = r-l;
+			alarm = (this.data.acoustic[id][date].diff > 15);
+			title = getTitle(id);
+			//title = id+(this.data.acoustic[id][date].level ? ': '+this.data.acoustic[id][date].level+' (spread = '+this.data.acoustic[id][date].spread+')' : '');	
 		}
 		if(typeof w!=="number") w = 0;
-		alarm = (this.data.acoustic[id].diff[date] > 15);
-		title = id+': '+this.data.acoustic[id].level[date]+' (spread = '+this.data.acoustic[id].spread[date]+')';	
 
 		if(!this.drawn){
 			html += '<div class="elementHolder" id="sensor-'+id+'">';
-			//html += '<div class="siteId">'+id+'</div>';
 			html += '<div class="spreadHolder">';
-
-			// If we have the level
-			html += '<div class="spread '+(mx > 200 ? 'c12-bg':'c1-bg')+'" style="filter:'+(alarm ? '':'grayscale(1)')+';left: '+(l*100)+'%;width:'+(w*100)+'%;overflow:hidden;white-space:nowrap;position:relative;" title="'+title+'">';
+			html += '<div class="spread" style="filter:'+(alarm ? '':'grayscale(1)')+';left: '+(l*100).toFixed(2)+'%;width:'+(w*100).toFixed(2)+'%;white-space:nowrap;position:relative;" title="'+title+'">';
 			html += '<div class="level"></div>';
 			html += '</div>';
 			html += '</div>';
 			html += '</div>';
 		}else{
 			css = {
-				'width':(w*100)+'%',
+				'width':(w*100).toFixed(2)+'%',
 				'filter':(alarm ? '':'grayscale(1)')
 			}
 			// Only update the left value if 
-			if(l > 0) css.left = (l*100)+'%';
-			this.data.el[id].css(css).attr('title',title);
+			if(l > 0) css.left = (l*100).toFixed(2)+'%';
+			this.data.el[id].css(css);//.attr('title',title);
+			if(balloon && balloon == id) S('.balloon').html(title);
 		}
 	}
 
@@ -233,6 +245,10 @@ AcousticLogger.prototype.drawAll = function(date){
 		this.data.el = {};
 		for(id in this.data.acoustic){
 			this.data.el[id] = S('#sensor-'+id+' .spread');
+			this.data.el[id].on('mouseover',{id:id},function(e){
+				S('.balloon').remove();
+				S(e.currentTarget).find('.level').html('<div class="balloon" data="'+e.data.id+'">'+getTitle(e.data.id)+'</div>')
+			})
 		}
 	}
 
