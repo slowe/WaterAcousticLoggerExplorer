@@ -385,7 +385,7 @@ p {
 	bottom: -0.5em;
 }
 
-.holder { width: 1080px; margin: auto; }
+.holder { width: 1080px; max-width: 100%; margin: auto; }
 #controls { height: 4em; border-bottom: 1px solid transparent; padding: 0.5em 0; }
 body.fixed #controls { position: fixed; z-index: 10; top: 0px; left: 0px; right: 0px; border-bottom: 1px solid #999; padding: 0.5em 1em; background-color: #efefef;  }
 body.fixed #main { margin-top: 5em; } /* 4em height + 1em margin */
