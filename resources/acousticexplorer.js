@@ -13,7 +13,7 @@ function AcousticLogger(attr) {
 	return this;
 }
 
-Acoustic.prototype.log = function(){
+AcousticLogger.prototype.log = function(){
 	if(this.logging){
 		var args = Array.prototype.slice.call(arguments, 0);
 		if(console && typeof console.log==="function") console.log('GWViewer',args);
@@ -21,7 +21,7 @@ Acoustic.prototype.log = function(){
 	return this;
 }
 
-Acoustic.prototype.load = function(){
+AcousticLogger.prototype.load = function(){
 
 	if(!this.files) return this;
 
