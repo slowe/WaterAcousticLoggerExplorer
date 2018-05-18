@@ -339,6 +339,8 @@ p {
     position: relative;
     left: 15%;
     border-radius: 0.25em;
+    transition: width 0.25s ease-in;
+    transition: left 0.25s ease-in;
 }
 
 .level {
@@ -351,4 +353,5 @@ p {
     -webkit-transform: translateX(-50%) translateY(-25%);
     border-radius: 50%;
     vertical-align: middle;
+    transition: left 0.25s ease-in;
 }
