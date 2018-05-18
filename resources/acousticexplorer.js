@@ -62,10 +62,10 @@ AcousticLogger.prototype.load = function(){
 					var typ = cols[1];
 					if(typ == "Lvl") typ = "level";
 					if(typ == "Spr") typ = "spread";
-					
-					this.data.acoustic[id] = {'level':{},'spread':{}};
+					if(!this.data.acoustic[id]) this.data.acoustic[id] = {'level':{},'spread':{}};
 					for(var c = 2; c < cols.length; c++){
-						this.data.acoustic[id][typ][head[c]] = parseInt(cols[c]);
+						val = parseInt(cols[c]);
+						if(!isNaN(val)) this.data.acoustic[id][typ][head[c]] = val;
 					}
 				}
 			}
