@@ -258,16 +258,18 @@ AcousticLogger.prototype.drawAll = function(date){
 		if(d.alarm){
 			str += '<br />Alarms';
 			for(var a = 0; a < d.alarm.length; a++){
-				str += '<br />';
-				if(d.alarm[a].leakfound=="Y") str += _obj.date+' leak found';
-				if(d.alarm[a].leakfound=="N") str += _obj.date+' no leak';
-				if(d.alarm[a].leakfound=="N-PRV") str += _obj.date+' no leak (PRV)';
+				str += '<br />'+_obj.date+': ';
+				if(d.alarm[a].state=="Y") str += 'alarm';
+				if(d.alarm[a].state=="N") str += 'no alarm';
+				if(d.alarm[a].leakfound=="Y") str += ' and leak found';
+				if(d.alarm[a].leakfound=="N") str += ' and no leak';
+				if(d.alarm[a].leakfound=="N-PRV") str += ' and no leak (PRV)';
 			}
 		}
 		return str;
 	}
 	
-	classes = ['sitevisit', 'leakfound','noleak','noleak-prv'];
+	classes = ['sitevisit', 'leakfound','noleak','noleak-prv','success','fail'];
 	siteVisitClass = "sitevisit";
 	for(var c = 0; c < classes.length; c++){
 		// Reset sitevisit class
@@ -282,22 +284,25 @@ AcousticLogger.prototype.drawAll = function(date){
 		alarm = false;
 		title = id;
 		cls = '';
-		if(this.data[id][date] && this.data[id][date].spread){
-			mn = (this.data[id][date].level - this.data[id][date].spread/2);
-			mx = (this.data[id][date].level + this.data[id][date].spread/2);
+		d = this.data[id][date]
+		if(d && d.spread){
+			mn = (d.level - d.spread/2);
+			mx = (d.level + d.spread/2);
 			l = (mn - this.range[0])/range;
 			r = (mx - this.range[0])/range;
 			if(l > 1) l = 1;
 			if(r > 1) r = 1.1;
 			w = r-l;
-			alarm = (this.data[id][date].diff > 15);
+			alarm = (d.diff > 15);
 			title = getTitle(id);
 			//title = id+(this.data[id][date].level ? ': '+this.data[id][date].level+' (spread = '+this.data[id][date].spread+')' : '');	
-			if(this.data[id][date].alarm){
+			if(d.alarm){
 				cls = 'sitevisit';
-				if(this.data[id][date].alarm[0].leakfound=="Y") cls += ' leakfound';
-				if(this.data[id][date].alarm[0].leakfound=="N") cls += ' noleak';
-				if(this.data[id][date].alarm[0].leakfound=="N-PRV") cls += ' noleak-prv';
+				if(d.alarm[0].state=="Y" && d.alarm[0].leakfound=="Y") cls += ' success';
+				if(d.alarm[0].state=="N" && d.alarm[0].leakfound=="N") cls += ' success';
+				if(d.alarm[0].state=="Y" && d.alarm[0].leakfound=="N") cls += ' fail';
+				if(d.alarm[0].state=="N" && d.alarm[0].leakfound=="Y") cls += ' fail';
+				if(d.alarm[0].leakfound=="N-PRV") cls += ' noleak-prv';
 			}
 		}
 		if(typeof w!=="number") w = 0;

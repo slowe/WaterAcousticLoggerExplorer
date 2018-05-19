@@ -389,10 +389,10 @@ p {
 	margin-top: -4px;
 	border: 4px solid rgba(0,0,0,0.3);
 }
-.sitevisit.leakfound .spread {
+.sitevisit.leakfound .spread, .sitevisit.success .spread {
 	border-color: rgba(29, 211, 167, 1);
 }
-.sitevisit.noleak .spread {
+.sitevisit.noleak .spread, .sitevisit.fail .spread {
 	border-color: rgba(214, 3, 3, 1);
 }
 .sitevisit.noleak-prv .spread {
