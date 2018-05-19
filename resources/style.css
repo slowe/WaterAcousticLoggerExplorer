@@ -369,7 +369,7 @@ p {
 	white-space: nowrap;
 	margin-right: -50%;
 	text-align: center;
-	z-index: 100;
+	z-index: 9;
 	box-shadow: 1px 1px 10px rgba(0,0,0,0.2);
 }
 .balloon::after {
@@ -383,6 +383,20 @@ p {
 	border-color: transparent;
 	border-left-color: black;
 	bottom: -0.5em;
+}
+.sitevisit .spread {
+	box-sizing: content-box;
+	margin-top: -4px;
+	border: 4px solid rgba(0,0,0,0.3);
+}
+.sitevisit.leakfound .spread {
+	border-color: rgba(29, 211, 167, 1);
+}
+.sitevisit.noleak .spread {
+	border-color: rgba(214, 3, 3, 1);
+}
+.sitevisit.noleak-prv .spread {
+	border-color: rgba(114, 46, 165, 1);
 }
 
 .holder { width: 1080px; max-width: 100%; margin: auto; }

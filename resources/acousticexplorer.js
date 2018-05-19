@@ -29,6 +29,10 @@ AcousticLogger.prototype.load = function(){
 
 	this.log('loading',this.files)
 	this.data = {};
+	this.loadAcoustic();
+	return this;
+}
+AcousticLogger.prototype.loadAcoustic = function(){
 
 	S().ajax(this.files.acousticData,{
 		'dataType':'csv',
@@ -37,7 +41,7 @@ AcousticLogger.prototype.load = function(){
 			this.log('complete',attrs,this);
 			
 			var lines = data.split(/[\n\r]+/);
-			this.data.acoustic = {};
+			this.data = {};
 			this.daterange = [1e20,-1e20];
 			this.range = [1e20,-1e20];
 			var months = {
@@ -83,10 +87,10 @@ AcousticLogger.prototype.load = function(){
 					var typ = cols[1];
 					if(typ == "Lvl") typ = "level";
 					if(typ == "Spr") typ = "spread";
-					if(!this.data.acoustic[id]) this.data.acoustic[id] = {};
+					if(!this.data[id]) this.data[id] = {};
 					for(var c = 2; c < cols.length; c++){
 						val = parseInt(cols[c]);
-						me = this.data.acoustic[id][head[c]];
+						me = this.data[id][head[c]];
 
 						if(!me) me = {};
 						if(!isNaN(val)) me[typ] = val;
@@ -98,7 +102,56 @@ AcousticLogger.prototype.load = function(){
 							if(mx > this.range[1] && mx < 100) this.range[1] = mx;
 							me.diff = me.level - me.spread;
 						}
-						this.data.acoustic[id][head[c]] = me;
+						this.data[id][head[c]] = me;
+					}
+				}
+			}
+
+			this.loadSiteVisit();
+
+			//if(typeof this.callback.onload==="function") this.callback.onload.call(this);
+		},
+		'progress': function(e,attrs){
+			this.log('progress',attrs,this);
+			if(typeof this.callback.onprogress==="function") this.callback.onprogress.call(this);
+		}
+	});
+	
+	return this;
+}
+
+AcousticLogger.prototype.loadSiteVisit = function(){
+
+	S().ajax(this.files.siteVisitData,{
+		'dataType': 'text',
+		'this':this,
+		'success': function(data,attrs){
+			this.log('complete',attrs,this);
+			
+			var lines = data.split(/[\n\r]+/);
+
+			// Leak Alarm,ID,Date Visited,Leak Found
+			// Y,100,15/02/2018,Y
+			// Y,114,16/02/2018,Y
+			// Y,555,16/02/2018,Y
+			this.log('siteVisitData')
+
+			for(var i = 0; i < lines.length; i++){
+				cols = lines[i].split(/,/);
+				if(i==0){
+					head = cols;
+				}else{
+					if(cols[1] && cols[2]){
+						var id = cols[1];
+						var al = cols[0];
+						// Re-write dates
+						var dt = cols[2].replace(/([0-9]{2})\/([0-9]{2})\/([0-9]{4})/,function(m,p1,p2,p3){ return p3+"-"+p2+"-"+p1; });
+						var lf = cols[3];
+
+						if(!this.data[id]) this.data[id] = {};
+						if(!this.data[id][dt]) this.data[id][dt] = {};
+						if(!this.data[id][dt].alarm) this.data[id][dt].alarm = new Array();
+						this.data[id][dt].alarm.push({'state':al,'leakfound':lf});
 					}
 				}
 			}
@@ -109,27 +162,6 @@ AcousticLogger.prototype.load = function(){
 		},
 		'progress': function(e,attrs){
 			this.log('progress',attrs,this);
-			if(typeof this.callback.onprogress==="function") this.callback.onprogress.call(this);
-		}
-	});
-
-	S().ajax(this.files.siteVisitData,{
-		'dataType': 'text',
-		'this':this,
-		'success': function(data,attrs){
-			this.log('complete',attrs,this);
-			
-			
-			
-			
-			
-			if(typeof this.callback.onload==="function") this.callback.onload.call(this);
-		},
-		'progress': function(e,attrs){
-			this.log('progress',attrs,this);
-			
-			
-			
 			if(typeof this.callback.onprogress==="function") this.callback.onprogress.call(this);
 		}
 	});
@@ -191,19 +223,9 @@ AcousticLogger.prototype.init = function(){
 	var o = offset(S('#controls')[0]);
 
 	S(document).on('scroll',function(e){
-/*		var main = S('.main');
-		if(S('.header').e.length==0){
-			var tr = S('.main tr:eq(0)');
-			var str = tr.html();
-			str = str.replace("Comedy panel shows","");
-			S('body').append('<div class="header"><table>'+str+'</table></div>');
-		}
-		var head = S('.header');
-*/
 		var main = S('#main');
 		var head = S('#controls');
-//		var o = offset(main.e[0]);
-		console.log(o.top,main.e[0].offsetHeight,document.body.scrollTop)
+//		console.log(o.top,main.e[0].offsetHeight,document.body.scrollTop)
 		if(document.body.scrollTop > o.top && document.body.scrollTop < o.top+main.e[0].offsetHeight) S('body').addClass('fixed');
 		else S('body').removeClass('fixed');
 	});
@@ -213,7 +235,7 @@ AcousticLogger.prototype.init = function(){
 
 AcousticLogger.prototype.drawAll = function(date){
 	
-	if(!this.data.acoustic){
+	if(!this.data){
 		this.log('No data loaded');
 		return this;
 	}
@@ -231,33 +253,58 @@ AcousticLogger.prototype.drawAll = function(date){
 
 	_obj = this;
 	function getTitle(id){
-		return id+(_obj.data.acoustic[id][_obj.date].level ? ': '+_obj.data.acoustic[id][_obj.date].level+' (spread = '+_obj.data.acoustic[id][_obj.date].spread+')' : '');
+		d = _obj.data[id][_obj.date];
+		str = id+(d.level ? ': '+d.level+' (spread = '+d.spread+')' : '');
+		if(d.alarm){
+			str += '<br />Alarms';
+			for(var a = 0; a < d.alarm.length; a++){
+				str += '<br />';
+				if(d.alarm[a].leakfound=="Y") str += _obj.date+' leak found';
+				if(d.alarm[a].leakfound=="N") str += _obj.date+' no leak';
+				if(d.alarm[a].leakfound=="N-PRV") str += _obj.date+' no leak (PRV)';
+			}
+		}
+		return str;
+	}
+	
+	classes = ['sitevisit', 'leakfound','noleak','noleak-prv'];
+	siteVisitClass = "sitevisit";
+	for(var c = 0; c < classes.length; c++){
+		// Reset sitevisit class
+		S('.spreadHolder.'+classes[c]).removeClass(classes[c]);
 	}
 
-	for(id in this.data.acoustic){
+	for(id in this.data){
 
 		l = 0;
 		r = 1;
 		w = 0;
 		alarm = false;
 		title = id;
-		if(this.data.acoustic[id][date] && this.data.acoustic[id][date].spread){
-			mn = (this.data.acoustic[id][date].level - this.data.acoustic[id][date].spread/2);
-			mx = (this.data.acoustic[id][date].level + this.data.acoustic[id][date].spread/2);
+		cls = '';
+		if(this.data[id][date] && this.data[id][date].spread){
+			mn = (this.data[id][date].level - this.data[id][date].spread/2);
+			mx = (this.data[id][date].level + this.data[id][date].spread/2);
 			l = (mn - this.range[0])/range;
 			r = (mx - this.range[0])/range;
 			if(l > 1) l = 1;
 			if(r > 1) r = 1.1;
 			w = r-l;
-			alarm = (this.data.acoustic[id][date].diff > 15);
+			alarm = (this.data[id][date].diff > 15);
 			title = getTitle(id);
-			//title = id+(this.data.acoustic[id][date].level ? ': '+this.data.acoustic[id][date].level+' (spread = '+this.data.acoustic[id][date].spread+')' : '');	
+			//title = id+(this.data[id][date].level ? ': '+this.data[id][date].level+' (spread = '+this.data[id][date].spread+')' : '');	
+			if(this.data[id][date].alarm){
+				cls = 'sitevisit';
+				if(this.data[id][date].alarm[0].leakfound=="Y") cls += ' leakfound';
+				if(this.data[id][date].alarm[0].leakfound=="N") cls += ' noleak';
+				if(this.data[id][date].alarm[0].leakfound=="N-PRV") cls += ' noleak-prv';
+			}
 		}
 		if(typeof w!=="number") w = 0;
 
 		if(!this.drawn){
 			html += '<div class="elementHolder" id="sensor-'+id+'">';
-			html += '<div class="spreadHolder">';
+			html += '<div class="spreadHolder'+(cls ? ' '+cls:'')+'">';
 			html += '<div class="spread" style="filter:'+(alarm ? '':'grayscale(1)')+';left: '+(l*100).toFixed(2)+'%;width:'+(w*100).toFixed(2)+'%;white-space:nowrap;position:relative;" title="'+title+'">';
 			html += '<div class="level"></div>';
 			html += '</div>';
@@ -271,6 +318,7 @@ AcousticLogger.prototype.drawAll = function(date){
 			// Only update the left value if 
 			if(l > 0) css.left = (l*100).toFixed(2)+'%';
 			this.data.el[id].css(css);
+			if(cls) this.data.el[id].parent().addClass(cls);
 			if(balloon && balloon == id) S('.balloon').html(title);
 		}
 	}
@@ -278,7 +326,7 @@ AcousticLogger.prototype.drawAll = function(date){
 	if(!this.drawn){
 		S('#output').html(html);
 		this.data.el = {};
-		for(id in this.data.acoustic){
+		for(id in this.data){
 			this.data.el[id] = S('#sensor-'+id+' .spread');
 			this.data.el[id].on('mouseover',{id:id},function(e){
 				S('.balloon').remove();
