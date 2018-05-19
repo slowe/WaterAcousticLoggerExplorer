@@ -99,7 +99,7 @@ AcousticLogger.prototype.loadAcoustic = function(){
 							mx = me.level + Math.abs(me.spread)/2;
 							if(mx > 200) console.log(id,me.level,me.spread)
 							if(mn < this.range[0]) this.range[0] = mn;
-							if(mx > this.range[1] && mx < 100) this.range[1] = mx;
+							if(mx > this.range[1] && mx < 200) this.range[1] = mx;
 							me.diff = me.level - me.spread;
 						}
 						this.data[id][head[c]] = me;
